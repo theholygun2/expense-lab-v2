@@ -7,7 +7,9 @@
     "db:migrate": "bunx drizzle-kit migrate",
     "db:push": "bunx drizzle-kit push",
     "db:studio": "bunx drizzle-kit studio",
-    "open-auth-docs": "open-cli http://localhost:3000/api/auth/reference"
+    "open-auth-docs": "open-cli http://localhost:3000/api/auth/reference",
+    "auth:generate": "bunx @better-auth/cli generate"
+    
   },
   "dependencies": {
     "@hono/zod-validator": "^0.4.2",
