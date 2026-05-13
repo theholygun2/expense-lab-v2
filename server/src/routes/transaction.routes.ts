@@ -13,7 +13,7 @@ import {
   createTransaction,
   updateTransaction,
   deleteTransaction,
-} from "@/db/queries"
+} from "@/db/queries/transaction.queries"
 import type { AuthenticatedEnv } from "@/types"
 
 export const transactionsRoute = new Hono<AuthenticatedEnv>()

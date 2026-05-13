@@ -17,7 +17,7 @@ export const transactions = pgTable(
     id: uuid("id").defaultRandom().primaryKey(),
     userId: text("user_id")
       .notNull()
-      .references(() => user.id),
+      .references(() => user.id, { onDelete: "cascade" }),
     date: date("date").notNull(),
     amount: numeric("amount", { precision: 12, scale: 2 }).notNull(),
     type: text("type").notNull(), // validated by Zod, not DB enum
@@ -33,10 +33,12 @@ export const insertTransactionSchema = createInsertSchema(transactions, {
   type: z.enum(["expense", "income"]),
   amount: z
     .string()
-    .regex(/^\d+(\.\d{1,2})?$/, "Amount must be a positive number"),
+    .regex(/^\d+(\.\d{1,2})?$/, "Amount must be a positive number")
+    .refine(v => parseFloat(v) > 0, "Amount must be greater than 0"),
   description: z.string().max(150).optional(),
   category: z.string().min(1, "Category is required").max(50),
   needWantSave: z.enum(["need", "want", "save"]).nullable().optional(),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be YYYY-MM-DD"),
 }).omit({ id: true, createdAt: true })
 
 export const selectTransactionSchema = createSelectSchema(transactions, {

@@ -31,17 +31,15 @@ export const getTransactionById = async (id: string, userId: string) => {
   const [transaction] = await db
     .select()
     .from(transactions)
-    .where(
-      and(
-        eq(transactions.id, id),
-        eq(transactions.userId, userId) // ownership check in query, not in JS
-      )
-    )
+    .where(and(eq(transactions.id, id), eq(transactions.userId, userId)))
   return transaction ?? null
 }
 
 export const createTransaction = async (data: InsertTransaction) => {
-  const [transaction] = await db.insert(transactions).values(data).returning()
+  const [transaction] = await db
+    .insert(transactions)
+    .values(data)
+    .returning()
   return transaction
 }
 
@@ -53,12 +51,7 @@ export const updateTransaction = async (
   const [transaction] = await db
     .update(transactions)
     .set(data)
-    .where(
-      and(
-        eq(transactions.id, id),
-        eq(transactions.userId, userId) // ownership check in query, not in JS
-      )
-    )
+    .where(and(eq(transactions.id, id), eq(transactions.userId, userId)))
     .returning()
   return transaction ?? null
 }
@@ -66,12 +59,7 @@ export const updateTransaction = async (
 export const deleteTransaction = async (id: string, userId: string) => {
   const [transaction] = await db
     .delete(transactions)
-    .where(
-      and(
-        eq(transactions.id, id),
-        eq(transactions.userId, userId) // ownership check in query, not in JS
-      )
-    )
+    .where(and(eq(transactions.id, id), eq(transactions.userId, userId)))
     .returning()
   return transaction ?? null
 }
