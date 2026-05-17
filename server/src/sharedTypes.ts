@@ -1,11 +1,11 @@
 import {
   insertTransactionSchema,
   selectTransactionSchema,
-} from "@/db/schema/transactions"
+} from "./db/schema/transactions"
 import {
   insertBudgetSchema,
   selectBudgetSchema,
-} from "@/db/schema/budgets"
+} from "./db/schema/budgets"
 import { z } from "zod"
 
 // ── Transactions ───────────────────────────────────────────────────────────

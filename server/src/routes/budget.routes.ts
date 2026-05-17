@@ -1,12 +1,12 @@
 import { Hono } from "hono"
 import { zValidator } from "@hono/zod-validator"
-import { authMiddleware } from "@/middlewares/auth.middleware"
-import { budgetIdSchema } from "@/db/schema/budgets"
+import { authMiddleware } from "../middlewares/auth.middleware"
+import { budgetIdSchema } from "../db/schema/budgets"
 import {
   createBudgetSchema,
   updateBudgetSchema,
   getBudgetsSchema,
-} from "@/sharedTypes"
+} from "../sharedTypes"
 import {
   getBudgetsByUserId,
   getBudgetById,
@@ -14,8 +14,8 @@ import {
   createBudget,
   updateBudget,
   deleteBudget,
-} from "@/db/queries/budget.queries"
-import type { AuthenticatedEnv } from "@/types"
+} from "../db/queries/budget.queries"
+import type { AuthenticatedEnv } from "../types"
 
 // helper — calculates the 50/30/20 splits server-side
 const calculateSplits = (salaryAmount: string) => {

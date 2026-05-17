@@ -9,7 +9,7 @@ import {
 } from "drizzle-orm/pg-core"
 import { createInsertSchema, createSelectSchema } from "drizzle-zod"
 import { z } from "zod"
-import { user } from "@/db/schema/auth"
+import { user } from "../../db/schema/auth"
 
 export const transactions = pgTable(
   "transactions",

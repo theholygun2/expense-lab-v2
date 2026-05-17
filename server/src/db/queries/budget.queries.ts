@@ -1,8 +1,7 @@
-import { db } from "@/db"
-import { budgets } from "@/db/schema"
+import { db } from "../../db"
+import { budgets } from "../../db/schema"
 import { eq, desc, and, sql } from "drizzle-orm"
-import type { InsertBudget } from "@/db/schema/budgets"
-import type { GetBudgetsParams } from "@/sharedTypes"
+import type { GetBudgetsParams } from "../../sharedTypes"
 import { type InferInsertModel } from "drizzle-orm"
 
 export const getBudgetsByUserId = async (

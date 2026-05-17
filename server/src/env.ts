@@ -8,6 +8,7 @@ const EnvSchema = z.object({
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
   REDIS_URL: z.string(),
+  CLIENT_URL: z.url()
 })
 
 export const env = EnvSchema.parse(process.env)

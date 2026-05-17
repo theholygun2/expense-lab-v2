@@ -1,6 +1,6 @@
 import { createMiddleware } from "hono/factory"
-import { auth } from "@/lib/auth"
-import { type AuthenticatedEnv } from "@/types"
+import { auth } from "../lib/auth"
+import { type AuthenticatedEnv } from "../types"
 
 export const authMiddleware = createMiddleware<AuthenticatedEnv>(
   async (c, next) => {

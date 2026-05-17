@@ -1,8 +1,8 @@
-import { db } from "@/db"
-import { transactions } from "@/db/schema"
+import { db } from "../../db"
+import { transactions } from "../../db/schema"
 import { eq, desc, and, sql } from "drizzle-orm"
-import type { InsertTransaction } from "@/db/schema/transactions"
-import type { GetTransactionsParams } from "@/sharedTypes"
+import type { InsertTransaction } from "../../db/schema/transactions"
+import type { GetTransactionsParams } from "../../sharedTypes"
 
 export const getTransactionsByUserId = async (
   userId: string,

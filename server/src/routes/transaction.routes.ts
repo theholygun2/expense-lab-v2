@@ -1,22 +1,22 @@
 import { Hono } from "hono"
 import { zValidator } from "@hono/zod-validator"
-import { authMiddleware } from "@/middlewares/auth.middleware"
-import { transactionIdSchema } from "@/db/schema/transactions"
+import { authMiddleware } from "../middlewares/auth.middleware"
+import { transactionIdSchema } from "../db/schema/transactions"
 import {
   createTransactionSchema,
   updateTransactionSchema,
   getTransactionsSchema,
-} from "@/sharedTypes"
+} from "../sharedTypes"
 import {
   getTransactionsByUserId,
   getTransactionById,
   createTransaction,
   updateTransaction,
   deleteTransaction,
-} from "@/db/queries/transaction.queries"
-import type { AuthenticatedEnv } from "@/types"
+} from "../db/queries/transaction.queries"
+import type { AuthenticatedEnv } from "../types"
 
-export const transactionsRoute = new Hono<AuthenticatedEnv>()
+export const transactionRoute = new Hono<AuthenticatedEnv>()
   .use(authMiddleware)
 
   // GET /transactions?type=expense&month=2026-04&category=food
