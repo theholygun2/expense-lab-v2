@@ -12,7 +12,7 @@ app.use(logger());
 
 // 3. Chain your routes on a clean slate
 const router = app
-  .on(['POST', 'GET'], '/auth/**', (c) => auth.handler(c.req.raw))
+  .on(['POST', 'GET'], '/auth/*', (c) => auth.handler(c.req.raw))
   .route('/transactions', transactionRoute)
   .route('/budgets', budgetRoute);
 
