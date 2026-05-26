@@ -25,6 +25,19 @@ export const transactionQueryOptions = (id: string) => queryOptions({
 
 // ── Budgets ────────────────────────────────────────────────────────────────
 
+export const budgetTransactionsQueryOptions = (periodStart: string, periodEnd: string) =>
+  queryOptions({
+    queryKey: ["transactions", { dateFrom: periodStart, dateTo: periodEnd }],
+    queryFn: async () => {
+      const r = await api.transactions.$get({
+        query: { dateFrom: periodStart, dateTo: periodEnd, limit: "500" },
+      })
+      if (!r.ok) throw new Error("Failed to fetch transactions")
+      return r.json()
+    },
+    enabled: !!periodStart && !!periodEnd,
+  })
+
 export const budgetsQueryOptions = queryOptions({
   queryKey: ["budgets"],
   queryFn: async () => {

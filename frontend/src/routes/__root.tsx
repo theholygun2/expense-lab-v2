@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import type { QueryClient } from "@tanstack/react-query"
+import { Toaster } from "@/components/ui/sonner"
 
 const navLinks = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -140,6 +141,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       <Navbar />
       <main className="mx-auto max-w-screen-lg px-4 py-6 pb-20 md:pb-6">
         <Outlet />
+        <Toaster />
       </main>
       <BottomNav />
       <TanStackRouterDevtools />

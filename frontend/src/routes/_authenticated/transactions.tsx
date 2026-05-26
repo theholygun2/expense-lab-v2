@@ -1,11 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
 import { transactionsQueryOptions } from "@/lib/queries"
 import { TransactionTable } from "@/components/transactions/transaction-table"
 import { TransactionFilters, type TransactionFilters as Filters } from "@/components/transactions/transaction-filters"
+import { TransactionDialog } from "@/components/transactions/transaction-dialog"
 
 export const Route = createFileRoute("/_authenticated/transactions")({
   component: TransactionsPage,
@@ -36,10 +35,7 @@ function TransactionsPage() {
             {data?.length ?? 0} transactions
           </p>
         </div>
-        <Button size="sm" className="gap-1.5">
-          <Plus className="h-4 w-4" />
-          Add
-        </Button>
+        <TransactionDialog />
       </div>
 
       {/* Filters */}

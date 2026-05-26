@@ -3,12 +3,13 @@ import { transactions } from "../../db/schema"
 import { eq, desc, and, sql } from "drizzle-orm"
 import type { InsertTransaction } from "../../db/schema/transactions"
 import type { GetTransactionsParams } from "../../sharedTypes"
+import { gte, lte } from "drizzle-orm"
 
 export const getTransactionsByUserId = async (
   userId: string,
   filters: GetTransactionsParams = { limit: 100, offset: 0 }
 ) => {
-  const { type, category, needWantSave, month, limit, offset } = filters
+  const { type, category, needWantSave, month, dateFrom, dateTo, limit, offset } = filters
 
   const conditions = [eq(transactions.userId, userId)]
 
@@ -17,6 +18,8 @@ export const getTransactionsByUserId = async (
   if (needWantSave) conditions.push(eq(transactions.needWantSave, needWantSave))
   if (month)
     conditions.push(sql`to_char(${transactions.date}, 'YYYY-MM') = ${month}`)
+    if (dateFrom) conditions.push(gte(transactions.date, dateFrom))
+    if (dateTo)   conditions.push(lte(transactions.date, dateTo))
 
   return await db
     .select()

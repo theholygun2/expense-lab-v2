@@ -42,12 +42,16 @@ export function TransactionFilters({ filters, onChange }: TransactionFiltersProp
       {/* Month */}
       <Select
         value={filters.month ?? monthOptions[0].value}
-        onValueChange={(v) => onChange({ ...filters, month: v })}
+        onValueChange={(v) => onChange({ ...filters, month: v === "all" ? undefined : v })}
       >
         <SelectTrigger className="h-8 w-[160px] text-xs">
-          <SelectValue />
+          <SelectValue placeholder="Select month"/>
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent position="popper" sideOffset={4}>
+          {/* 1. Add the "All" Option at the top */}
+    <SelectItem value="all" className="text-xs">
+      All Months
+    </SelectItem>
           {monthOptions.map((m) => (
             <SelectItem key={m.value} value={m.value} className="text-xs">
               {m.label}
