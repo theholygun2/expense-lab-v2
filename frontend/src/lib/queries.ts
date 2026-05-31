@@ -56,6 +56,16 @@ export const activeBudgetQueryOptions = queryOptions({
   },
 })
 
+export const budgetByIdQueryOptions = (id: string) => queryOptions({
+  queryKey: ["budgets", id],
+  queryFn: async () => {
+    const r = await api.budgets[":id"].$get({ param: { id } })
+    if (!r.ok) throw new Error("Failed to fetch budget")
+    return r.json()
+  },
+  enabled: !!id,
+})
+
 // src/lib/queries.ts
 export const sessionQueryOptions = queryOptions({
   queryKey: ["session"],

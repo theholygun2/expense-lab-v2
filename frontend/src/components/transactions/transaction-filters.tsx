@@ -41,8 +41,8 @@ export function TransactionFilters({ filters, onChange }: TransactionFiltersProp
     <div className="flex flex-wrap items-center gap-2">
       {/* Month */}
       <Select
-        value={filters.month ?? monthOptions[0].value}
-        onValueChange={(v) => onChange({ ...filters, month: v === "all" ? undefined : v })}
+      value={filters.month ?? "all"}  // ← was: filters.month ?? monthOptions[0].value
+      onValueChange={(v) => onChange({ ...filters, month: v === "all" ? undefined : v })}
       >
         <SelectTrigger className="h-8 w-[160px] text-xs">
           <SelectValue placeholder="Select month"/>

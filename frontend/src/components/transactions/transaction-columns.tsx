@@ -2,6 +2,7 @@ import { type ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ArrowUpDown } from "lucide-react"
+import { CATEGORIES, INCOME_CATEGORIES } from "@/lib/categories"
 
 // mirrors SelectTransaction from server
 export type Transaction = {
@@ -16,18 +17,8 @@ export type Transaction = {
 }
 
 const categoryLabels: Record<string, string> = {
-  food: "Makanan",
-  transport: "Transport",
-  bills: "Tagihan",
-  entertainment: "Hiburan",
-  shopping: "Belanja",
-  savings: "Tabungan",
-  investment: "Investasi",
-  paycheck: "Gaji",
-  freelance: "Freelance",
-  health: "Kesehatan",
-  self_improvement: "Pengembangan Diri",
-  tithe: "Persembahan",
+  ...CATEGORIES,
+  ...INCOME_CATEGORIES,
 }
 
 const needWantSaveLabels: Record<string, string> = {
@@ -35,6 +26,8 @@ const needWantSaveLabels: Record<string, string> = {
   want: "Keinginan",
   save: "Tabungan",
 }
+
+// ... rest of columns unchanged
 
 export const columns: ColumnDef<Transaction>[] = [
   {
@@ -114,7 +107,7 @@ export const columns: ColumnDef<Transaction>[] = [
       const type = row.original.type
       const amount = Number(row.getValue("amount"))
       return (
-        <span className={`font-mono text-sm font-medium ${type === "income" ? "text-green-600 dark:text-green-400" : ""}`}>
+        <span className={`text-sm font-medium ${type === "income" ? "text-green-600 dark:text-green-400" : ""}`}>
           {type === "income" ? "+" : "-"}Rp{amount.toLocaleString("id-ID")}
         </span>
       )

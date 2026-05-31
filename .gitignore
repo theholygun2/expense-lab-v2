@@ -9,7 +9,28 @@ node_modules/
 
 # Build outputs
 dist/
+dist-ssr/
 .cache/
 
 # System files
 .DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# One-time scripts with personal data
+server/src/scripts/

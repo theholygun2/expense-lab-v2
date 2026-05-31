@@ -53,7 +53,7 @@ function Navbar() {
               key={to}
               to={to}
               className={cn(
-                "flex items-center gap-2 rounded-md px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                "flex items-center gap-2 rounded-md px-3 py-1.5 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
               )}
               activeProps={{
                 className: "bg-accent text-accent-foreground font-medium",

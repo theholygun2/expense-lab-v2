@@ -25,9 +25,10 @@ export const getTransactionsByUserId = async (
     .select()
     .from(transactions)
     .where(and(...conditions))
-    .orderBy(desc(transactions.date))
+    .orderBy(desc(transactions.date), desc(transactions.createdAt))
     .limit(limit)
     .offset(offset)
+    
 }
 
 export const getTransactionById = async (id: string, userId: string) => {

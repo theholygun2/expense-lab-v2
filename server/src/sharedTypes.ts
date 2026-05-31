@@ -33,9 +33,13 @@ export const getTransactionsSchema = z.object({
   offset: z.coerce.number().min(0).default(0),
 })
 
+export const selectTransactionSchemaApi = selectTransactionSchema.extend({
+  createdAt: z.string(), // make em date to string for Frontend
+})
+
 export type CreateTransaction = z.infer<typeof createTransactionSchema>
 export type UpdateTransaction = z.infer<typeof updateTransactionSchema>
-export type Transaction = z.infer<typeof selectTransactionSchema>
+export type Transaction = z.infer<typeof selectTransactionSchemaApi>
 export type GetTransactionsParams = z.infer<typeof getTransactionsSchema>
 
 // ── Budgets ────────────────────────────────────────────────────────────────
@@ -68,7 +72,11 @@ export const getBudgetsSchema = z.object({
   offset: z.coerce.number().min(0).default(0),
 })
 
+export const selectBudgetSchemaApi = selectBudgetSchema.extend({
+  createdAt: z.string(), 
+})
+
 export type CreateBudget = z.infer<typeof createBudgetSchema>
 export type UpdateBudget = z.infer<typeof updateBudgetSchema>
-export type Budget = z.infer<typeof selectBudgetSchema>
+export type Budget = z.infer<typeof selectBudgetSchemaApi>
 export type GetBudgetsParams = z.infer<typeof getBudgetsSchema>
