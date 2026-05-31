@@ -38,6 +38,19 @@ export const budgetTransactionsQueryOptions = (periodStart: string, periodEnd: s
     enabled: !!periodStart && !!periodEnd,
   })
 
+// add staleTime to activeBudgetQueryOptions
+export const activeBudgetQueryOptions = queryOptions({
+  queryKey: ["budgets", "active"],
+  queryFn: async () => {
+    const r = await api.budgets.active.$get()
+    if (!r.ok) return null  // ← return null instead of throwing on 404
+    return r.json()
+  },
+  staleTime: 1000 * 60 * 5,  // ← don't refetch for 5 min
+  retry: false,               // ← don't retry on 404
+})
+
+// same for budgetsQueryOptions
 export const budgetsQueryOptions = queryOptions({
   queryKey: ["budgets"],
   queryFn: async () => {
@@ -45,15 +58,7 @@ export const budgetsQueryOptions = queryOptions({
     if (!r.ok) throw new Error("Failed to fetch budgets")
     return r.json()
   },
-})
-
-export const activeBudgetQueryOptions = queryOptions({
-  queryKey: ["budgets", "active"],
-  queryFn: async () => {
-    const r = await api.budgets.active.$get()
-    if (!r.ok) throw new Error("No active budget")
-    return r.json()
-  },
+  staleTime: 1000 * 60 * 5,
 })
 
 export const budgetByIdQueryOptions = (id: string) => queryOptions({
