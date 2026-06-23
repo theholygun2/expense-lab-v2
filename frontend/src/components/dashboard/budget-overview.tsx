@@ -29,41 +29,68 @@ function StatCard({
   icon: React.ElementType
 }) {
   const remaining = budget - spent
-  const pct = budget > 0 ? Math.min((spent / budget) * 100, 100) : 0
+  const pctRemaining = budget > 0 ? Math.max((remaining / budget) * 100, 0) : 0
   const isOver = spent > budget
 
   return (
-    <Card>
-      <CardContent className="pt-4">
-        <div className="mb-3 flex items-center justify-between">
-          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+    <Card className="overflow-hidden border border-border/60 shadow-sm">
+      <CardContent className="p-4">
+        {/* 1. Header: Category & Visual Identifier */}
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-xs font-semibold text-muted-foreground/90 uppercase tracking-wider">
             {label}
           </span>
-          <Icon size={15} className="text-muted-foreground" />
+          <div className={`p-1.5 rounded-md ${isOver ? 'bg-destructive/10 text-destructive' : 'bg-muted text-muted-foreground'}`}>
+            <Icon size={16} />
+          </div>
         </div>
-        <p className="text-xl font-semibold">
-          {formatRp(Math.max(remaining, 0))}
-        </p>
-        <p className="mt-0.5 text-xs text-muted-foreground">
-          sisa dari {formatRp(budget)}
-        </p>
-        <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+
+        {/* 2. Primary Focal Point: What is left */}
+        <div className="space-y-0.5">
+          <span className="text-xs font-medium text-muted-foreground block">Sisa Anggaran</span>
+          <p className={`text-2xl font-black tracking-tight ${isOver ? 'text-destructive line-through opacity-70' : 'text-foreground'}`}>
+            {formatRp(Math.max(remaining, 0))}
+          </p>
+        </div>
+
+        {/* 3. The Health Bar Anchor */}
+        <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-secondary/60">
           <div
-            className={`h-full rounded-full transition-all ${
-              isOver
-                ? "bg-destructive"
-                : pct > 80
-                ? "bg-amber-500"
-                : "bg-primary"
+            className={`h-full rounded-full transition-all duration-500 ${
+              pctRemaining === 0
+                ? "" 
+                : pctRemaining < 20
+                ? "bg-destructive" 
+                : pctRemaining < 50
+                ? "bg-amber-500"   
+                : "bg-emerald-500" // Emerald stands out better as "healthy" than primary blue/zinc
             }`}
-            style={{ width: `${pct}%` }}
+            style={{ width: `${pctRemaining}%` }}
           />
         </div>
-        <p className="mt-1 text-[11px] text-muted-foreground">
-          {isOver
-            ? `lewat ${formatRp(spent - budget)}`
-            : `${pct.toFixed(0)}% terpakai`}
-        </p>
+
+        {/* 4. Contextual Breakdown: Spent vs Initial Budget */}
+        <div className="mt-3 flex items-center justify-between border-t border-border/40 pt-2 text-xs">
+          <div>
+            <span className="text-muted-foreground block text-[10px] uppercase font-medium">Terpakai</span>
+            <span className={`font-semibold ${isOver ? 'text-destructive' : 'text-foreground/90'}`}>
+              {formatRp(spent)}
+            </span>
+          </div>
+          <div className="text-right">
+            <span className="text-muted-foreground block text-[10px] uppercase font-medium">Awal</span>
+            <span className="font-bold">
+              {formatRp(budget)}
+            </span>
+          </div>
+        </div>
+
+        {/* 5. Dynamic Warning Badge if Overspent */}
+        {isOver && (
+          <div className="mt-2.5 rounded bg-destructive/10 px-2 py-1 text-center text-[11px] font-medium text-destructive">
+            Overspent {formatRp(spent - budget)}
+          </div>
+        )}
       </CardContent>
     </Card>
   )
@@ -97,37 +124,22 @@ export function BudgetOverview({
   })
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4">
+      <div className="flex items-center justify-between px-1">
         <div>
-          <h2 className="text-sm font-medium ">
+          <h2 className="text-sm font-semibold tracking-tight">
             Periode {startDate} – {endDate}
           </h2>
-          <p className="text-xs text-muted-foreground">
-            Gaji {formatRp(salary)} · Total keluar {formatRp(totalSpent)}
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Gaji {formatRp(salary)} · Total Keluar <span className="font-medium text-foreground">{formatRp(totalSpent)}</span>
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
-        <StatCard
-          label="Kebutuhan"
-          budget={needs}
-          spent={needsSpent}
-          icon={Wallet}
-        />
-        <StatCard
-          label="Keinginan"
-          budget={wants}
-          spent={wantsSpent}
-          icon={TrendingDown}
-        />
-        <StatCard
-          label="Tabungan"
-          budget={savings}
-          spent={savingsSpent}
-          icon={PiggyBank}
-        />
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <StatCard label="Kebutuhan" budget={needs} spent={needsSpent} icon={Wallet} />
+        <StatCard label="Keinginan" budget={wants} spent={wantsSpent} icon={TrendingDown} />
+        <StatCard label="Tabungan" budget={savings} spent={savingsSpent} icon={PiggyBank} />
       </div>
     </div>
   )

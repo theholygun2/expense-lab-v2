@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button"
 import { ArrowUpDown } from "lucide-react"
 import { CATEGORIES, INCOME_CATEGORIES } from "@/lib/categories"
 
-// mirrors SelectTransaction from server
 export type Transaction = {
   id: string
   date: string
@@ -27,8 +26,6 @@ const needWantSaveLabels: Record<string, string> = {
   save: "Tabungan",
 }
 
-// ... rest of columns unchanged
-
 export const columns: ColumnDef<Transaction>[] = [
   {
     accessorKey: "date",
@@ -36,80 +33,104 @@ export const columns: ColumnDef<Transaction>[] = [
       <Button
         variant="ghost"
         size="sm"
-        className="-ml-3 h-8"
+        className="-ml-3 h-8 data-[state=open]:bg-accent"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
-        Date
-        <ArrowUpDown className="ml-2 h-3 w-3" />
+        Tanggal
+        <ArrowUpDown className="ml-2 h-3 w-3 text-muted-foreground" />
       </Button>
     ),
     cell: ({ row }) => {
       const date = new Date(row.getValue("date"))
       return (
-        <span className="text-sm text-muted-foreground">
-          {date.toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
+        <span className="text-sm text-muted-foreground tabular-nums">
+          {date.toLocaleDateString("id-ID", { 
+            day: "numeric", 
+            month: "short", 
+            year: "numeric" 
+          })}
         </span>
       )
     },
   },
   {
+    // Combined Category & Description into a structural cell block
     accessorKey: "category",
-    header: "Category",
+    header: "Transaksi",
     cell: ({ row }) => {
       const cat = row.getValue("category") as string
-      return <span className="text-sm">{categoryLabels[cat] ?? cat}</span>
-    },
-  },
-  {
-    accessorKey: "description",
-    header: "Description",
-    cell: ({ row }) => (
-      <span className="max-w-[180px] truncate text-sm text-muted-foreground">
-        {row.getValue("description") ?? "—"}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "type",
-    header: "Type",
-    cell: ({ row }) => {
-      const type = row.getValue("type") as string
+      const desc = row.original.description
+      
       return (
-        <Badge variant={type === "income" ? "default" : "destructive"}>
-          {type === "income" ? "Income" : "Expense"}
-        </Badge>
+        <div className="flex flex-col gap-0.5 max-w-[220px]">
+          <span className="text-sm font-semibold tracking-tight text-foreground">
+            {categoryLabels[cat] ?? cat}
+          </span>
+          {desc && (
+            <span className="truncate text-xs text-muted-foreground">
+              {desc}
+            </span>
+          )}
+        </div>
       )
     },
   },
   {
     accessorKey: "needWantSave",
-    header: "Budget",
+    header: "Alokasi",
     cell: ({ row }) => {
       const val = row.getValue("needWantSave") as string | null
-      if (!val) return <span className="text-muted-foreground">—</span>
-      return <Badge variant="outline">{needWantSaveLabels[val] ?? val}</Badge>
+      if (!val) return <span className="text-xs text-muted-foreground/50">—</span>
+      
+      const badgeStyles: Record<string, string> = {
+        need: "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-900/50 dark:bg-blue-950/30 dark:text-blue-400",
+        want: "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-400",
+        save: "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-950/30 dark:text-emerald-400",
+      }
+
+      return (
+        <Badge 
+          variant="outline" 
+          className={`font-medium shadow-none transition-none text-[11px] px-2 py-0.5 ${badgeStyles[val] ?? ""}`}
+        >
+          {needWantSaveLabels[val] ?? val}
+        </Badge>
+      )
     },
   },
   {
     accessorKey: "amount",
+    // Header right-aligned to match numbers
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        size="sm"
-        className="-ml-3 h-8"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Amount
-        <ArrowUpDown className="ml-2 h-3 w-3" />
-      </Button>
+      <div className="text-right">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="-mr-3 h-8 font-medium inline-flex justify-end"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Jumlah
+          <ArrowUpDown className="ml-2 h-3 w-3 text-muted-foreground" />
+        </Button>
+      </div>
     ),
     cell: ({ row }) => {
       const type = row.original.type
       const amount = Number(row.getValue("amount"))
+      const isIncome = type === "income"
+
       return (
-        <span className={`text-sm font-medium ${type === "income" ? "text-green-600 dark:text-green-400" : ""}`}>
-          {type === "income" ? "+" : "-"}Rp{amount.toLocaleString("id-ID")}
-        </span>
+        <div className="text-right tabular-nums">
+          <span 
+            className={`text-sm font-bold tracking-tight ${
+              isIncome 
+                ? "text-emerald-600 dark:text-emerald-400" 
+                : "text-foreground"
+            }`}
+          >
+            {isIncome ? "+" : "-"}Rp{amount.toLocaleString("id-ID")}
+          </span>
+        </div>
       )
     },
   },

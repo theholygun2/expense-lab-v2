@@ -1,4 +1,4 @@
-import { PieChart, Pie, Sector, type PieLabelRenderProps, type PieSectorShapeProps } from "recharts"
+import { PieChart, Pie, Cell, Label } from "recharts"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   ChartContainer,
@@ -9,7 +9,7 @@ import {
 import { formatRp } from "@/lib/format"
 
 const chartConfig = {
-  need: { label: "Kebutuhan", color: "#185FA5" },
+  need: { label: "Kebutuhan", color: "#185FA5" }, // Back to your reliable blues
   want: { label: "Keinginan", color: "#1D9E75" },
   save: { label: "Tabungan",  color: "#BA7517" },
 } satisfies ChartConfig
@@ -29,51 +29,24 @@ type SpendingDonutProps = {
   savingsBudget: number
 }
 
-const RADIAN = Math.PI / 180
-
-// renders % label inside each slice
-const renderLabel = ({
-  cx, cy, midAngle, innerRadius, outerRadius, percent,
-}: PieLabelRenderProps) => {
-  if (!percent || (percent * 100) < 5) return null // skip tiny slices
-  const radius = Number(innerRadius) + (Number(outerRadius) - Number(innerRadius)) * 0.5
-  const x = Number(cx) + radius * Math.cos(-(midAngle ?? 0) * RADIAN)
-  const y = Number(cy) + radius * Math.sin(-(midAngle ?? 0) * RADIAN)
-  return (
-    <text
-      x={x} y={y}
-      fill="white"
-      textAnchor="middle"
-      dominantBaseline="central"
-      fontSize={12}
-      fontWeight={500}
-    >
-      {`${(percent * 100).toFixed(0)}%`}
-    </text>
-  )
-}
-
-// uses shape prop for per-slice colors — no Cell needed
-const ColoredSlice = (props: PieSectorShapeProps) => (
-  <Sector {...props} fill={COLORS[(props as any).key] ?? "#888"} />
-)
-
 export function SpendingDonut({ needsSpent, wantsSpent, savingsSpent }: SpendingDonutProps) {
   const data = [
-  { key: "need", label: "Kebutuhan", spent: needsSpent, fill: COLORS.need },
-  { key: "want", label: "Keinginan", spent: wantsSpent, fill: COLORS.want },
-  { key: "save", label: "Tabungan",  spent: savingsSpent, fill: COLORS.save },
-].filter((d) => d.spent > 0)
+    { key: "need", label: "Kebutuhan", spent: needsSpent },
+    { key: "want", label: "Keinginan", spent: wantsSpent },
+    { key: "save", label: "Tabungan",  spent: savingsSpent },
+  ].filter((d) => d.spent > 0)
 
   const total = data.reduce((s, d) => s + d.spent, 0)
 
   if (data.length === 0) {
     return (
-      <Card>
+      <Card className="border border-border/60 shadow-sm">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm">Pengeluaran periode ini</CardTitle>
+          <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Pengeluaran Periode Ini
+          </CardTitle>
         </CardHeader>
-        <CardContent className="flex h-[200px] items-center justify-center text-sm text-muted-foreground">
+        <CardContent className="flex h-[220px] items-center justify-center text-sm text-muted-foreground">
           Belum ada transaksi
         </CardContent>
       </Card>
@@ -81,53 +54,96 @@ export function SpendingDonut({ needsSpent, wantsSpent, savingsSpent }: Spending
   }
 
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm">Pengeluaran periode ini</CardTitle>
+    <Card className="border border-border/60 shadow-sm flex flex-col justify-between">
+      <CardHeader className="pb-0">
+        <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+          Pengeluaran Periode Ini
+        </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-3">
-        <ChartContainer config={chartConfig} className="h-[180px] w-full">
-          <PieChart>
-            <Pie
-              data={data}
-              dataKey="spent"
-              nameKey="key"
-              cx="50%"
-              cy="50%"
-              innerRadius="55%"
-              outerRadius="80%"
-              paddingAngle={3}
-              labelLine={false}
-              label={renderLabel}
-              isAnimationActive={true}
-            />
-            <ChartTooltip
-              content={
-                <ChartTooltipContent
-                  formatter={(value) => formatRp(Number(value))}
-                />
-              }
-            />
-          </PieChart>
-        </ChartContainer>
-
-        {/* custom legend with values */}
-        <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5">
-          {data.map((d) => (
-            <span key={d.key} className="flex items-center gap-1.5">
-              <span
-                className="h-2 w-2 flex-shrink-0 rounded-sm"
-                style={{ background: COLORS[d.key] }}
+      
+      <CardContent className="p-4 pt-0">
+        {/* The Unified Chart Wrapper */}
+        <div className="mx-auto aspect-square max-h-[200px] w-full">
+          <ChartContainer config={chartConfig} className="h-full w-full">
+            <PieChart>
+              <ChartTooltip
+                cursor={false}
+                content={
+                  <ChartTooltipContent 
+                    hideLabel 
+                    formatter={(value) => formatRp(Number(value))}
+                  />
+                }
               />
-              {d.label} · {formatRp(d.spent)}
-            </span>
-          ))}
+              <Pie
+                data={data}
+                dataKey="spent"
+                nameKey="key"
+                innerRadius="68%" // Thinner ring feels more modern and leaves room for text
+                outerRadius="88%"
+                paddingAngle={4}
+                isAnimationActive={true}
+              >
+                {data.map((entry) => (
+                  <Cell key={`cell-${entry.key}`} fill={COLORS[entry.key]} className="stroke-background" strokeWidth={2} />
+                ))}
+                
+                {/* The Center Anchor Text */}
+                <Label
+                  content={({ viewBox }) => {
+                    if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                      return (
+                        <text
+                          x={viewBox.cx}
+                          y={viewBox.cy}
+                          textAnchor="middle"
+                          dominantBaseline="middle"
+                        >
+                          <tspan
+                            x={viewBox.cx}
+                            y={viewBox.cy}
+                            className="fill-foreground text-lg font-black tracking-tight"
+                          >
+                            {formatRp(total)}
+                          </tspan>
+                          <tspan
+                            x={viewBox.cx}
+                            y={(viewBox.cy || 0) + 18}
+                            className="fill-muted-foreground text-[10px] font-bold uppercase tracking-wider"
+                          >
+                            Total Keluar
+                          </tspan>
+                        </text>
+                      )
+                    }
+                  }}
+                />
+              </Pie>
+            </PieChart>
+          </ChartContainer>
         </div>
 
-        {/* total */}
-        <p className="text-center">
-          Total · {formatRp(total)}
-        </p>
+        {/* Clean, Modular Ledger Legends */}
+        <div className="mt-2 space-y-1.5 border-t border-border/40 pt-3">
+          {data.map((d) => {
+            const percentage = total > 0 ? (d.spent / total) * 100 : 0
+            return (
+              <div key={d.key} className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2">
+                  <div
+                    className="h-2 w-2 flex-shrink-0 rounded-full"
+                    style={{ background: COLORS[d.key] }}
+                  />
+                  <span className="font-medium text-foreground/80">{d.label}</span>
+                  <span className="text-muted-foreground/60 tabular-nums">({percentage.toFixed(0)}%)</span>
+                </div>
+                <span className="font-bold text-foreground tabular-nums">
+                  {formatRp(d.spent)}
+                </span>
+              </div>
+            )
+          })}
+        </div>
       </CardContent>
     </Card>
   )

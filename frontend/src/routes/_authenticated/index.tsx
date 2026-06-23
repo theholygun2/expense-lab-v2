@@ -131,12 +131,12 @@ function DashboardPage() {
               }
             }}
           >
-            <SelectTrigger className="h-8 w-[200px] text-xs">
+            <SelectTrigger className="h-8">{/* <SelectTrigger className="h-8 w-[200px] text-xs"></SelectTrigger> */}
               <SelectValue placeholder="Pilih periode" />
             </SelectTrigger>
             <SelectContent>
               {allBudgets?.map((b) => (
-                <SelectItem key={b.id} value={b.id} className="text-xs">
+                <SelectItem key={b.id} value={b.id}>
                   {b.id === activeBudget?.id ? "● " : ""}
                   {formatPeriodLabel(b.periodStart, b.periodEnd)}
                 </SelectItem>
